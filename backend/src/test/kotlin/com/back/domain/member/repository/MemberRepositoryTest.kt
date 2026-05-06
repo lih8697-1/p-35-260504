@@ -1,5 +1,6 @@
 package com.back.domain.member.repository
 
+import com.back.global.extentions.getOrThrow
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,4 +22,9 @@ class MemberRepositoryTest {
         assertThat(member.id).isEqualTo(1)
     }
 
+    @Test
+    fun `findQById()`() {
+        val member = memberRepository.findQById(1).getOrThrow()
+        assertThat(member.id).isEqualTo(1)
+    }
 }
