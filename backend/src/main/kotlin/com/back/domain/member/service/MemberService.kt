@@ -66,7 +66,7 @@ class MemberService(
     }
 
     fun findByPaged(page: Int, pageSize: Int): Page<Member> {
-        val pagable = PageRequest.of(page, pageSize)
+        val pagable = PageRequest.of(page - 1, pageSize)
         return memberRepository.findAll(pagable)
     }
 }
