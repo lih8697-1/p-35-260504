@@ -12,7 +12,10 @@ class Post(
     @ManyToOne(fetch = FetchType.LAZY)
     var author: Member,
     var title: String,
-    var content: String,
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.REMOVE])
+    var body: PostBody,
+
     @OneToMany(
         mappedBy = "post",
         cascade = [CascadeType.PERSIST, CascadeType.REMOVE],
@@ -20,15 +23,15 @@ class Post(
         orphanRemoval = true
     )
     val comments: MutableList<Comment> = ArrayList<Comment>()
-    ) :
+) :
     BaseEntity(0) {
 
-    constructor(author: Member, title: String, content: String) : this(author, title, content, ArrayList<Comment>())
+    constructor(author: Member, title: String, content: PostBody) : this(author, title, content, ArrayList<Comment>())
 
     fun update(title: String, content: String) {
 
         this.title = title
-        this.content = content
+        this.body = PostBody(content)
     }
 
     // 댓글 추가
