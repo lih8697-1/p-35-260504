@@ -4,6 +4,7 @@ import com.back.domain.member.dto.MemberWithUsernameDto
 import com.back.domain.member.service.MemberService
 import com.back.standard.dto.PageDto
 import com.back.standard.enums.MemberSearchKeywordType
+import com.back.standard.enums.MemberSearchSortType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -21,13 +22,14 @@ class ApiV1AdmMemberController(
         @RequestParam("pageSize", defaultValue = "2") pageSize: Int,
         @RequestParam("kw", defaultValue = "") kw: String,
         @RequestParam("kwType", defaultValue = "ALL") kwType: MemberSearchKeywordType,
+        @RequestParam("sort", defaultValue = "ID") sort: MemberSearchSortType,
     ): PageDto<MemberWithUsernameDto> {
 
         // 페이지 예외 처리
         val page = if (page >= 1) page else 1
         val pageSize = if (pageSize >= 5) pageSize else 5
 
-        val pagedResult = memberService.findByPaged(page, pageSize, kw, kwType)
+        val pagedResult = memberService.findByPaged(page, pageSize, kw, kwType, sort)
 
         return PageDto(
             pagedResult.map {
