@@ -3,6 +3,7 @@ package com.back.domain.member.repository
 import com.back.domain.member.entity.Member
 import com.back.domain.member.entity.QMember
 import com.back.standard.enums.MemberSearchKeywordType
+import com.back.standard.enums.MemberSearchSortType
 import com.querydsl.core.BooleanBuilder
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Page
@@ -84,6 +85,7 @@ class MemberRepositoryImpl(
             .fetch()
     }
 
+    // where nickname LIKE %a%
     override fun findQByNicknameContaining(nickname: String): List<Member> {
         val member = QMember.member
 
@@ -123,20 +125,35 @@ class MemberRepositoryImpl(
         val member = QMember.member
 
         // content 쿼리
-        val content = jpaQueryFactory
+        val result = jpaQueryFactory
             .selectFrom(member)
             .where(member.nickname.contains(nickname))
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
             .fetch()
 
-        return PageableExecutionUtils.getPage(content, pageable) {
+        val totalCount = jpaQueryFactory
+            .select(member.count())
+            .from(member)
+            .where(member.nickname.contains(nickname))
+            .fetchOne() ?: 0L
+
+        return PageableExecutionUtils.getPage(
+            result,
+            pageable
+        ) {
             jpaQueryFactory
                 .select(member.count())
                 .from(member)
                 .where(member.nickname.contains(nickname))
                 .fetchOne() ?: 0L
         }
+
+//        return PageImpl(
+//            result,
+//            pageable,
+//            totalCount
+//        )
     }
 
     override fun findQByNicknameContainingOrderByIdDesc(nickname: String): List<Member> {
@@ -185,7 +202,7 @@ class MemberRepositoryImpl(
 
         val member = QMember.member
 
-        val builder = BooleanBuilder()?.apply {
+        val builder = BooleanBuilder().apply {
             when(kwType) {
                 MemberSearchKeywordType.USERNAME -> this.and(member.username.contains(kw))
                 MemberSearchKeywordType.NICKNAME -> this.and(member.nickname.contains(kw))
@@ -202,6 +219,14 @@ class MemberRepositoryImpl(
         val query = jpaQueryFactory
             .selectFrom(member)
             .where(builder)
+
+        pageable.sort.forEach { order ->
+            when (order.property.lowercase()) {
+                MemberSearchSortType.ID.property -> query.orderBy(if (order.isAscending) member.id.asc() else member.id.desc())
+                MemberSearchSortType.USERNAME.property -> query.orderBy(if (order.isAscending) member.username.asc() else member.username.desc())
+                MemberSearchSortType.NICKNAME.property -> query.orderBy(if (order.isAscending) member.nickname.asc() else member.nickname.desc())
+            }
+        }
 
         val content = query
             .offset(pageable.offset)
