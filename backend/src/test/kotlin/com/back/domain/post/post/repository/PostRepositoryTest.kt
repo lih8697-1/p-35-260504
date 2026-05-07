@@ -122,6 +122,13 @@ class PostRepositoryTest {
 
         val content = postPage.content
 
+        println(content[0].title)
+        println(content[1].title)
+        println(content[2].title)
+
+        println(content[0].author.nickname)
+        println(content[2].author.nickname)
+
         assertThat(content).isNotEmpty
     }
 }
