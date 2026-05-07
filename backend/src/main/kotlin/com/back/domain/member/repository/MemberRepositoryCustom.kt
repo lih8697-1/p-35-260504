@@ -1,6 +1,7 @@
 package com.back.domain.member.repository
 
 import com.back.domain.member.entity.Member
+import com.back.standard.enums.MemberSearchKeywordType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -18,5 +19,5 @@ interface MemberRepositoryCustom {
     fun countQByNicknameContaining(nickname: String): Long
     fun existsQByNicknameContaining(nickname: String): Boolean
     fun findQByUsernameContaining(username: String, pageable: Pageable): Page<Member>
-    fun findByKwPaged(kw: String, kwType: String, pageable: Pageable): Page<Member>
+    fun findByKwPaged(kw: String, kwType: MemberSearchKeywordType, pageable: Pageable): Page<Member>
 }

@@ -2,7 +2,8 @@ package com.back.domain.member.controller
 
 import com.back.domain.member.dto.MemberWithUsernameDto
 import com.back.domain.member.service.MemberService
-import com.back.standard.ut.dto.PageDto
+import com.back.standard.dto.PageDto
+import com.back.standard.enums.MemberSearchKeywordType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,7 +20,7 @@ class ApiV1AdmMemberController(
         @RequestParam("page", defaultValue = "1") page: Int,
         @RequestParam("pageSize", defaultValue = "2") pageSize: Int,
         @RequestParam("kw", defaultValue = "") kw: String,
-        @RequestParam("kwType", defaultValue = "ALL") kwType: String,
+        @RequestParam("kwType", defaultValue = "ALL") kwType: MemberSearchKeywordType,
     ): PageDto<MemberWithUsernameDto> {
 
         // 페이지 예외 처리
